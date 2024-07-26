@@ -24,7 +24,7 @@ const Table = () => {
 	const [update, setUpdate] = useState(false);
 	const [remove, setRemove] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const [users, setUsers] = useState<User[]>([]);
+	const [users, setUsers] = useState<any>(null);
 	const handleCreate = () => setCreate(!create);
 	const handleUpdate = () => setUpdate(!update);
 	const handleDelete = () => setRemove(!remove);
@@ -38,12 +38,13 @@ const Table = () => {
 				},
 			};
 			const response = await axios.get(
-				`https://vggroup.free.beeceptor.com/api/users`,
+				`https://voyatek.free.beeceptor.com/api/users/`,
 				config
 			);
 			if (response.status === 200 || response.status === 201) {
 				setLoading(false);
 				setUsers(response.data);
+				// return response.data;
 			}
 		} catch (error: any) {
 			setLoading(false);
@@ -55,11 +56,7 @@ const Table = () => {
 		getUsers();
 	}, []);
 
-	const addUser = (newUser: User) => {
-		setUsers([...users, newUser]);
-		toast.success('User created successfully!');
-	};
-
+	// console.log(users[0]);
 	return (
 		<div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
 			<table className='w-full text-sm text-left rtl:text-right'>
@@ -115,8 +112,8 @@ const Table = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{!loading && users.length > 0 ? (
-						users.map((user: User) => (
+					{loading === false && users ? (
+						users?.map((user: User) => (
 							<tr
 								className='odd:bg-white even:bg-gray-50  border-b text-xs text-[#344054]'
 								key={user.id}>
@@ -155,18 +152,18 @@ const Table = () => {
 								</td>
 							</tr>
 						))
-					) : !loading && users.length === 0 ? (
+					) : loading === false && users && users.length === 0 ? (
 						<tr>
-							<td className='text-center' colSpan={4}>No User</td>
+							<td className='text-center'>No User</td>
 						</tr>
 					) : (
 						<tr>
-							<td className='text-center' colSpan={4}>Loading...</td>
+							<td className='text-center'>loading...</td>
 						</tr>
 					)}
 				</tbody>
 			</table>
-			{create && <CreateUser handleCreate={handleCreate} addUser={addUser} />}
+			{create && <CreateUser handleCreate={handleCreate} />}
 			{update && <UpdateUser handleUpdate={handleUpdate} />}
 			{remove && <DeleteUser handleDelete={handleDelete} />}
 		</div>
