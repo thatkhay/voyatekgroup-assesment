@@ -1,16 +1,12 @@
-'use client';
-import React, { useState } from 'react';
-import TableInput from './TableInput';
-import Image from 'next/image';
-import addUserIccon from '../../../assets/addUser.svg';
-import filterIccon from '../../../assets/filter.svg';
-import chevIccon from '../../../assets/chevron-v.svg';
-import TableCheckBox from './TableCheckBox';
-import CreateUser from '../modals/CreateUser';
-import UpdateUser from '../modals/UpdateUser';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import DeleteUser from '../modals/DeleteUser';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import TableInput from "./TableInput";
+import TableCheckBox from "./TableCheckBox";
+import CreateUser from "../modals/CreateUser";
+import UpdateUser from "../modals/UpdateUser";
+import DeleteUser from "../modals/DeleteUser";
+import { toast } from "react-toastify";
 
 type User = {
 	id: number;
@@ -19,153 +15,155 @@ type User = {
 	role: string;
 };
 
-const Table = () => {
+const Table: React.FC = () => {
 	const [create, setCreate] = useState(false);
 	const [update, setUpdate] = useState(false);
-	const [remove, setRemove] = useState(false);
-	const [loading, setLoading] = useState(false);
-	const [users, setUsers] = useState<any>(null);
+	const [deleted, setDeleted] = useState(false);
+	const [loading, setLoading] = useState(true); // Start with loading true
+	const [users, setUsers] = useState<User[]>([]);
+	const [error, setError] = useState<string | null>(null); // Add error state
+
 	const handleCreate = () => setCreate(!create);
 	const handleUpdate = () => setUpdate(!update);
-	const handleDelete = () => setRemove(!remove);
+	const handleDelete = () => setDeleted(!deleted);
 
+	// Fetch users from API
 	const getUsers = async () => {
+		setLoading(true); // Set loading to true before API call
 		try {
-			setLoading(true);
-			const config = {
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			};
-			const response = await axios.get(
-				`https://voyatek.free.beeceptor.com/api/users/`,
-				config
-			);
-			if (response.status === 200 || response.status === 201) {
-				setLoading(false);
-				setUsers(response.data);
-				// return response.data;
+			const response = await fetch('https://voyatek-take-home.free.beeceptor.com/api/get-user'); // Replace with your API endpoint
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
 			}
-		} catch (error: any) {
-			setLoading(false);
-			console.log(error);
+			const data = await response.json();
+			setUsers(data.data);
+		} catch (error) {
+			setError('Failed to fetch users'); // Set error message
+			console.error('Error fetching users:', error);
+		} finally {
+			setLoading(false); // Set loading to false after fetching data
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		getUsers();
 	}, []);
 
-	// console.log(users[0]);
+	const addUser = (newUser: User) => {
+		setUsers([...users, newUser]);
+		toast.success("User created successfully!");
+	};
+
 	return (
-		<div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
-			<table className='w-full text-sm text-left rtl:text-right'>
-				<thead className='text-xs text-[#334155] font-[400] bg-[#F0F2F5]'>
-					<tr className='bg-white'>
-						<td className='px-6 py-4' colSpan={2}>
-							<div className='flex items-center gap-x-4'>
+		<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+			<table className="w-full text-sm text-left rtl:text-right">
+				<thead className="text-xs text-[#334155] font-[400] bg-[#F0F2F5]">
+					<tr className="bg-white">
+						<td className="px-6 py-4" colSpan={2}>
+							<div className="flex items-center gap-x-4">
 								<TableInput />
 								<button
-									type='submit'
-									className='focus:ring-blue-300 font-medium border rounded-lg text-xs px-4 py-2 flex gap-x-2 items-center'>
-									<Image src={filterIccon} alt='icon' width={15} height={15} />
+									type="submit"
+									className="focus:ring-blue-300 font-medium border rounded-lg text-xs px-4 py-2 flex gap-x-2 items-center"
+								>
 									Filter
 								</button>
 							</div>
 						</td>
-						<td className='px-6 py-4' colSpan={2}>
-							<div className='flex justify-end'>
+						<td className="px-6 py-4" colSpan={2}>
+							<div className="flex justify-end">
 								<button
-									type='submit'
+									type="submit"
 									onClick={() => setCreate(true)}
-									className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-4 py-2 flex gap-x-2 items-center'>
-									<Image src={addUserIccon} alt='icon' width={15} height={15} />
+									className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-4 py-2 flex gap-x-2 items-center"
+								>
 									New User
 								</button>
 							</div>
 						</td>
 					</tr>
 					<tr>
-						<th scope='col' className='px-6 py-3 font-[500]'>
-							<div className='flex gap-x-2 items-center'>
+						<th scope="col" className="px-6 py-3 font-[500] bg-[#F0F2F5]">
+							<div className="flex gap-x-2 items-center">
 								<TableCheckBox />
-								Name <Image src={chevIccon} alt='icon' width={15} height={15} />
+								Name
 							</div>
 						</th>
-						<th scope='col' className='px-6 py-3 font-[500]'>
-							<p className='flex gap-x-2'>
-								Email Address{' '}
-								<Image src={chevIccon} alt='icon' width={15} height={15} />
-							</p>
+						<th scope="col" className="px-6 py-3 font-[500]">
+							<p className="flex gap-x-2">Email Address</p>
 						</th>
-						<th scope='col' className='px-6 py-3 font-[500]'>
-							<p className='flex gap-x-2'>
-								Role <Image src={chevIccon} alt='icon' width={15} height={15} />
-							</p>
+						<th scope="col" className="px-6 py-3 font-[500]">
+							<p className="flex gap-x-2">Role</p>
 						</th>
-						<th scope='col' className='px-6 py-3 font-[500]'>
-							<p className='flex gap-x-2'>
-								Actions{' '}
-								<Image src={chevIccon} alt='icon' width={15} height={15} />
-							</p>
+						<th scope="col" className="px-6 py-3 font-[500]">
+							<p className="flex gap-x-2">Actions</p>
 						</th>
 					</tr>
 				</thead>
 				<tbody>
-					{loading === false && users ? (
-						users?.map((user: User) => (
-							<tr
-								className='odd:bg-white even:bg-gray-50  border-b text-xs text-[#344054]'
-								key={user.id}>
-								<th
-									scope='row'
-									className='px-6 py-4 whitespace-nowrap font-normal '>
-									<div className='flex gap-x-2 items-center'>
+					{loading ? (
+						<tr>
+							<td className="text-center" colSpan={4}>
+								Loading Users...
+							</td>
+						</tr>
+					) : error ? (
+						<tr>
+							<td className="text-center text-red-500" colSpan={4}>
+								{error}
+							</td>
+						</tr>
+					) : users.length > 0 ? (
+						users.map((user: User) => (
+							<tr className="bg-white border-[#F0F2F5] border-b-4" key={user.id}>
+								<th scope="row" className="px-6 py-4 whitespace-nowrap font-normal">
+									<div className="flex gap-x-2 items-center">
 										<TableCheckBox />
 										{user.name}
 									</div>
 								</th>
-								<td className='px-6 py-4'>{user.email}</td>
-								<td className='px-6 py-4 '>
+								<td className="px-6 py-4">{user.email}</td>
+								<td className="px-6 py-4">
 									<p
-										className={`py-1 px-2 rounded-[25px] text-center w-max ${
-											user.role === 'Administrator'
-												? 'text-[#0D6EFD] bg-[#F0F6FE]'
-												: user.role === 'Sales Manager'
-												? 'text-[#0F973D] bg-[#E7F6EC]'
-												: 'text-[#F58A07] bg-[#FEF4E6]'
-										}`}>
+										className={`py-1 px-2 rounded-[25px] text-center w-max ${user.role === "Administrator"
+												? "text-[#0D6EFD] bg-[#F0F6FE]"
+												: user.role === "Sales Manager"
+													? "text-[#10B981] bg-[#D1FAE5]"
+													: "text-[#F58A07] bg-[#FEF4E6]"
+
+											}`}
+									>
 										{user.role}
 									</p>
 								</td>
-								<td className='px-6 py-4 text-xs '>
+								<td className="px-6 py-4 text-xs">
 									<span
-										className='text-[#0D6EFD] mr-4 cursor-pointer'
-										onClick={() => handleUpdate()}>
+										className="text-[#0D6EFD] mr-4 cursor-pointer"
+										onClick={() => handleUpdate()}
+									>
 										View
 									</span>
 									<span
-										className='text-[#98A2B3] cursor-pointer'
-										onClick={() => handleDelete()}>
+										className="text-[#98A2B3] cursor-pointer"
+										onClick={() => handleDelete()}
+									>
 										Remove
 									</span>
 								</td>
 							</tr>
 						))
-					) : loading === false && users && users.length === 0 ? (
-						<tr>
-							<td className='text-center'>No User</td>
-						</tr>
 					) : (
 						<tr>
-							<td className='text-center'>loading...</td>
+							<td className="text-center text-red-500" colSpan={4}>
+								No User Found
+							</td>
 						</tr>
 					)}
 				</tbody>
 			</table>
-			{create && <CreateUser handleCreate={handleCreate} />}
+			{create && <CreateUser handleCreate={handleCreate} addUser={addUser} />}
 			{update && <UpdateUser handleUpdate={handleUpdate} />}
-			{remove && <DeleteUser handleDelete={handleDelete} />}
+			{deleted && <DeleteUser handleDelete={handleDelete} />}
 		</div>
 	);
 };

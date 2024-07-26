@@ -11,8 +11,8 @@ type Props = {};
 
 const Header = (props: Props) => {
 	return (
-		<div className='h-[80px] px-[50px] py-[20px] flex items-center gap-8 justify-between bg-white shadow-md fixed left-0 right-0'>
-			<div className='min-h-[50px] w-1/2 flex items-center gap-x-8'>
+		<div className='h-[80px] px-4 md:px-[50px] py-[20px] flex flex-col md:flex-row items-center gap-4 md:gap-8 justify-between bg-white shadow-md fixed left-0 right-0'>
+			<div className='min-h-[50px] w-full md:w-1/2 flex flex-col md:flex-row items-center gap-4 md:gap-x-8'>
 				<Image src={logo} alt='logo' width={40} height={40} />
 				<form className='flex-grow'>
 					<label
@@ -40,15 +40,15 @@ const Header = (props: Props) => {
 						<input
 							type='search'
 							id='default-search'
-							className='block w-full px-4 py-2 ps-10 text-sm  border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500'
+							className='block w-full px-4 py-2 ps-10 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500'
 							placeholder='search here...'
 							required
 						/>
 					</div>
 				</form>
 			</div>
-			<div className='min-h-[50px] w-max flex items-center gap-x-8 text-[#647995]'>
-				<ul className='flex gap-x-6 w-max'>
+			<div className='min-h-[50px] w-full md:w-max flex flex-col md:flex-row items-center gap-4 md:gap-x-8 text-[#647995]'>
+				<ul className='flex flex-col md:flex-row gap-4 md:gap-x-6 w-full md:w-max'>
 					<li className='flex flex-col gap-y-2 items-center'>
 						<Image src={bell} width={15} height={15} alt='icon' />{' '}
 						<span className='text-[12px]'>Notifications</span>
@@ -66,7 +66,7 @@ const Header = (props: Props) => {
 						<span className='text-[12px]'>Settings</span>
 					</li>
 				</ul>
-				<Image src={profile} alt='icon' width={50} height={50} />
+				<Image src={profile} alt='icon' width={40} height={40} />
 			</div>
 		</div>
 	);
