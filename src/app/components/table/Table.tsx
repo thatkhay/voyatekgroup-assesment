@@ -9,6 +9,8 @@ import DeleteUser from "../modals/DeleteUser";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import filterIcon from "../../../assets/filter.svg";
+import navigation from "../../../assets/navigation.svg";
+import add from "../../../assets/addUser.svg";
 
 type User = {
   id: number;
@@ -27,7 +29,10 @@ const Table: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const handleCreate = () => setCreate(!create);
-  const handleUpdate = () => setUpdate(!update);
+  const handleUpdate = (user: User | null = null) => {
+    setSelectedUser(user);
+    setUpdate(!update);
+  };
   const handleDelete = () => setDeleted(!deleted);
 
   // Fetch users from API
@@ -35,7 +40,7 @@ const Table: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://voyatek-api.free.beeceptor.com/api/get-user"
+        "https://voyatek.free.beeceptor.com/api/get-user"
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -43,7 +48,7 @@ const Table: React.FC = () => {
       const data = await response.json();
       setUsers(data.data);
     } catch (error) {
-      setError("Failed to fetch users"); // Set error message
+      setError("Failed to fetch users");
       console.error("Error fetching users:", error);
     } finally {
       setLoading(false);
@@ -59,11 +64,15 @@ const Table: React.FC = () => {
     toast.success("User created successfully!");
   };
 
+  const updateUser = (updatedUser: User) => {
+    setUsers(users.map((user) => (user.id === updatedUser.id ? updatedUser : user)));
+    toast.success("User updated successfully!");
+  };
+
   const deleteUser = async (userId: number) => {
     try {
-      // Assume there is an API endpoint to delete the user
       const response = await fetch(
-        `https://voyatek-api.free.beeceptor.com/api/delete-user/${userId}`,
+        `https://voyatek.free.beeceptor.com/api/delete-user/${userId}`,
         {
           method: "DELETE",
         }
@@ -71,20 +80,19 @@ const Table: React.FC = () => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      // Update state to remove the user
       setUsers(users.filter((user) => user.id !== userId));
       toast.success("User deleted successfully!");
       handleDelete();
     } catch (error) {
-      setError("Failed to delete user"); // Set error message
+      setError("Failed to delete user");
       console.error("Error deleting user:", error);
       toast.error("Failed to delete user");
     }
   };
 
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <table className="w-full text-sm text-left rtl:text-right">
+    <div className=" overflow-x-auto shadow-md sm:rounded-lg max-sm:w-full z-0">
+      <table className="min-w-full text-sm text-left rtl:text-right">
         <thead className="text-xs text-[#334155] font-[400] bg-[#F0F2F5]">
           <tr className="bg-white">
             <td className="px-6 py-4" colSpan={2}>
@@ -106,6 +114,7 @@ const Table: React.FC = () => {
                   onClick={() => setCreate(true)}
                   className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-4 py-2 flex gap-x-2 items-center"
                 >
+                  <Image src={add} width={15} height={15} alt="icon" />
                   New User
                 </button>
               </div>
@@ -171,9 +180,9 @@ const Table: React.FC = () => {
                 <td className="px-6 py-4 text-xs">
                   <span
                     className="text-[#0D6EFD] mr-4 cursor-pointer"
-                    onClick={() => handleUpdate()}
+                    onClick={() => handleUpdate(user)}
                   >
-                    View
+                    Edit
                   </span>
                   <span
                     className="text-[#98A2B3] cursor-pointer"
@@ -197,7 +206,9 @@ const Table: React.FC = () => {
         </tbody>
       </table>
       {create && <CreateUser handleCreate={handleCreate} addUser={addUser} />}
-      {update && <UpdateUser handleUpdate={handleUpdate} />}
+      {update && selectedUser && (
+        <UpdateUser handleUpdate={handleUpdate} selectedUser={selectedUser} updateUser={updateUser} />
+      )}
       {deleted && selectedUser && (
         <DeleteUser handleDelete={handleDelete} deleteUser={() => deleteUser(selectedUser.id)} />
       )}

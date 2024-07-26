@@ -13,7 +13,7 @@ type Props = {};
 
 const Sidebar = (props: Props) => {
 	return (
-		<div className='hidden md:flex w-[200px] fixed top-[100px] bottom-0 left-[20px] bg-white p-5 rounded-md shadow-md flex-col justify-between'>
+		<div className='lg:flex md:hidden max-sm:hidden w-[200px] fixed top-[100px] bottom-0 left-[20px] bg-white p-5 rounded-md shadow-md flex-col justify-between'>
 			<div>
 				<p className='text-sm'>Settings</p>
 				<ul className='min-h-[300px] mt-5 flex flex-col gap-y-6'>
