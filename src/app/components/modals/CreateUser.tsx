@@ -4,17 +4,17 @@ import user from '../../../assets/createIcon.svg';
 import cancel from '../../../assets/X.svg';
 import { toast } from 'react-toastify';
 
-type Props = {
-	handleCreate: () => void;
-	addUser: (newUser: User) => void;
-};
-
 type User = {
 	id: number;
 	email: string;
 	name: string;
 	role: string;
 	password: string;
+};
+
+type Props = {
+	handleCreate: () => void;
+	addUser: (newUser: User) => void;
 };
 
 const CreateUser: React.FC<Props> = ({ handleCreate, addUser }) => {
@@ -63,45 +63,67 @@ const CreateUser: React.FC<Props> = ({ handleCreate, addUser }) => {
 	};
 
 	return (
-		<div className='fixed inset-0 flex items-center justify-center z-50'>
-			<div className='relative w-[600px] p-4 bg-white rounded-lg shadow'>
-				<div className='flex justify-between items-center mb-4'>
-					<h2 className='text-xl font-bold'>Create User</h2>
-					<button onClick={handleCreate} className='focus:outline-none'>
-						<Image src={cancel} alt='Cancel' />
-					</button>
-				</div>
-				<form onSubmit={handleSubmit}>
-					<div className='grid grid-cols-2 gap-4'>
+		<>
+
+		<div
+				className='relative z-10'
+				aria-labelledby='modal-title'
+				role='dialog'
+				aria-modal='true'>
+				<div
+					className='fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity'
+					aria-hidden='true'></div>
+
+			<div className='fixed inset-0 flex items-center justify-center z-50'>
+				<div className='relative w-full max-w-md p-6 bg-white rounded-lg shadow-lg'>
+					<div className='flex flex-col gap-y-2 items-center relative mb-4'>
+						<Image src={user} alt='icon' width={60} height={60} />
+						<h2>New User</h2>
+						<Image
+							src={cancel}
+							alt='icon'
+							width={30}
+							height={30}
+							className='absolute right-0 top-0 cursor-pointer'
+							onClick={() => handleCreate()}
+						/>
+					</div>
+					<form onSubmit={handleSubmit} className='space-y-4'>
 						<div>
-							<label className='block text-sm font-medium mb-1'>Name</label>
+							<label htmlFor='name' className='block text-sm font-medium text-gray-700 mb-1'>
+								Name
+							</label>
 							<input
 								type='text'
 								name='name'
 								value={formData.name}
 								onChange={handleChange}
-								className='w-full px-3 py-2 border rounded-lg focus:outline-none'
+								className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
 								required
 							/>
 						</div>
 						<div>
-							<label className='block text-sm font-medium mb-1'>Email</label>
+							<label htmlFor='email' className='block text-sm font-medium text-gray-700 mb-1'>
+								Email
+							</label>
 							<input
 								type='email'
 								name='email'
 								value={formData.email}
 								onChange={handleChange}
-								className='w-full px-3 py-2 border rounded-lg focus:outline-none'
+								className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
 								required
 							/>
 						</div>
 						<div>
-							<label className='block text-sm font-medium mb-1'>Role</label>
+							<label htmlFor='role' className='block text-sm font-medium text-gray-700 mb-1'>
+								Role
+							</label>
 							<select
 								name='role'
 								value={formData.role}
 								onChange={handleChange}
-								className='w-full px-3 py-2 border rounded-lg focus:outline-none'
+								className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
 								required>
 								<option value=''>Select a role</option>
 								<option value='Administrator'>Administrator</option>
@@ -110,27 +132,31 @@ const CreateUser: React.FC<Props> = ({ handleCreate, addUser }) => {
 							</select>
 						</div>
 						<div>
-							<label className='block text-sm font-medium mb-1'>Password</label>
+							<label htmlFor='password' className='block text-sm font-medium text-gray-700 mb-1'>
+								Password
+							</label>
 							<input
 								type='password'
 								name='password'
 								value={formData.password}
 								onChange={handleChange}
-								className='w-full px-3 py-2 border rounded-lg focus:outline-none'
+								className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
 								required
 							/>
 						</div>
-					</div>
-					<div className='flex justify-end mt-4'>
-						<button
-							type='submit'
-							className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none'>
-							Create
-						</button>
-					</div>
-				</form>
+						<div className='flex justify-end mt-4'>
+							<button
+								type='submit'
+								className='px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'>
+								Create
+							</button>
+						</div>
+					</form>
+				</div>
 			</div>
-		</div>
+			</div>
+		</>
+
 	);
 };
 

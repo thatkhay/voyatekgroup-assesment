@@ -7,6 +7,8 @@ import CreateUser from "../modals/CreateUser";
 import UpdateUser from "../modals/UpdateUser";
 import DeleteUser from "../modals/DeleteUser";
 import { toast } from "react-toastify";
+import Image from "next/image";
+
 
 type User = {
 	id: number;
@@ -19,9 +21,9 @@ const Table: React.FC = () => {
 	const [create, setCreate] = useState(false);
 	const [update, setUpdate] = useState(false);
 	const [deleted, setDeleted] = useState(false);
-	const [loading, setLoading] = useState(true); // Start with loading true
+	const [loading, setLoading] = useState(true);
 	const [users, setUsers] = useState<User[]>([]);
-	const [error, setError] = useState<string | null>(null); // Add error state
+	const [error, setError] = useState<string | null>(null);
 
 	const handleCreate = () => setCreate(!create);
 	const handleUpdate = () => setUpdate(!update);
@@ -29,9 +31,9 @@ const Table: React.FC = () => {
 
 	// Fetch users from API
 	const getUsers = async () => {
-		setLoading(true); // Set loading to true before API call
+		setLoading(true);
 		try {
-			const response = await fetch('https://voyatek-take-home.free.beeceptor.com/api/get-user'); // Replace with your API endpoint
+			const response = await fetch('https://voyatek-take-home.free.beeceptor.com/api/get-user');
 			if (!response.ok) {
 				throw new Error('Network response was not ok');
 			}
@@ -41,7 +43,7 @@ const Table: React.FC = () => {
 			setError('Failed to fetch users'); // Set error message
 			console.error('Error fetching users:', error);
 		} finally {
-			setLoading(false); // Set loading to false after fetching data
+			setLoading(false);
 		}
 	};
 
@@ -72,6 +74,11 @@ const Table: React.FC = () => {
 						</td>
 						<td className="px-6 py-4" colSpan={2}>
 							<div className="flex justify-end">
+								<Image src="." 
+									alt="My Logo"
+									width={500}
+									height={300}
+									layout="responsive" />
 								<button
 									type="submit"
 									onClick={() => setCreate(true)}
@@ -126,10 +133,10 @@ const Table: React.FC = () => {
 								<td className="px-6 py-4">
 									<p
 										className={`py-1 px-2 rounded-[25px] text-center w-max ${user.role === "Administrator"
-												? "text-[#0D6EFD] bg-[#F0F6FE]"
-												: user.role === "Sales Manager"
-													? "text-[#10B981] bg-[#D1FAE5]"
-													: "text-[#F58A07] bg-[#FEF4E6]"
+											? "text-[#0D6EFD] bg-[#F0F6FE]"
+											: user.role === "Sales Manager"
+												? "text-[#10B981] bg-[#D1FAE5]"
+												: "text-[#F58A07] bg-[#FEF4E6]"
 
 											}`}
 									>
