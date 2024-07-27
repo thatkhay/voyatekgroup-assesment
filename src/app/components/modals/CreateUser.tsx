@@ -36,7 +36,7 @@ const CreateUser: React.FC<Props> = ({ handleCreate, addUser }) => {
 		e.preventDefault();
 
 		try {
-			const response = await fetch('https://voyatek-take-home.free.beeceptor.com/api/create-user', {
+			const response = await fetch('https://voyatek-api.free.beeceptor.com/api/create-user', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
